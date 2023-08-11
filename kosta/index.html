@@ -5,9 +5,11 @@
 </head>
 <body>
   <h1>Räkna ut er poäng</h1>
-  Kom ihåg att ju färre antal inversioner desto bättre.
+  Lägst poäng vinner. Lägsta möjliga poäng är 0, och sämsta möjliga är 36.
+
+  <br>
   <form id="inversionForm">
-    <label for="vector">Mata ert lista (kommaseparerade tal):</label>
+    <label for="vector">Mata er lista (kommaseparerade tal mellan 1 och 12, t.ex. 1,2,3,4,5,6,7,8,9,10,11,12):</label>
  <input type="text" id="vector" name="vector" required pattern="^([1-9]|1[0-2])(,[1-9]|1[0-2])*$">
     <button type="submit">Beräkna</button>
   </form>
