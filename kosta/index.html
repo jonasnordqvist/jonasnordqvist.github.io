@@ -26,8 +26,9 @@
     }
   
 
-  function countInversions(arr) {
-  let count = 0;
+  function countInversions() {
+    const vector = document.getElementById("inputVector").value;
+    let count = 0;
 
   function mergeSort(arr) {
     if (arr.length <= 1) {
@@ -64,7 +65,7 @@
   return count;
 }
 
-const vector = document.getElementById("inputVector").value;
+
 const inversionCount = countInversions(vector);
 document.getElementById("result").innerHTML = `Summa: ${inversionCount}, Medelvärde: ${inversionCount}`;
   </script>
