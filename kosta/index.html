@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Matematik i Kosta</title>
+  <title>The force is strong with this one</title>
   <style>
     #inputVector {
       width: 300px;
@@ -9,7 +9,7 @@
   </style>
 </head>
 <body>
-  <h1>Vektorberäkning</h1>
+  <h1>Räkna ut din poäng</h1>
   <label for="inputVector">Skriv ner er vektor (t.ex. [1, 2, 3, 4, 5, 6, 7, 8, 9]):</label>
   <input type="text" id="inputVector" placeholder="Ange vektorn här">
   <button onclick="countInversions()">Beräkna inversioner</button>
@@ -66,7 +66,7 @@
 
 const vector = document.getElementById("inputVector").value;
 const inversionCount = countInversions(vector);
-console.log("Antal inversioner:", inversionCount);
+document.getElementById("result").innerHTML = `Summa: ${inversionCount}, Medelvärde: ${inversionCount}`;
   </script>
 
   
