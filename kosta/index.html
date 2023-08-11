@@ -6,11 +6,10 @@
 <body>
   <h1>Räkna ut er poäng</h1>
   Lägst poäng vinner. Lägsta möjliga poäng är 0, och sämsta möjliga är 36.
-
-  <br>
+  <br><br>
   <form id="inversionForm">
-    <label for="vector">Mata in er lista (kommaseparerade tal mellan 1 och 12, t.ex. 1,2,3,4,5,6,7,8,9,10,11,12):</label>
- <input type="text" id="vector" name="vector" required pattern="^([1-9]|1[0-2])(,[1-9]|1[0-2])*$">
+    <label for="vector">Mata in er lista (kommaseparerade tal, t.ex. 1, 7, 6, 2, ...):</label>
+ <input type="text" id="vector" name="vector" required>
     <button type="submit">Beräkna</button>
   </form>
   <p id="result"></p>
