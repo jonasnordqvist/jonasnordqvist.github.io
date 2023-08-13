@@ -58,11 +58,50 @@
       return count;
     }
 
+    function replaceNumbers(list) {
+        for (let i = 0; i < list.length; i++) {
+          if (list[i] === 1) {
+            list[i] = 11;
+          } else if (list[i] === 2) {
+            list[i] = 5;
+          } else if (list[i] === 3) {
+            list[i] = 7;
+          } else if (list[i] === 4) {
+            list[i] = 2;
+          } else if (list[i] === 5) {
+            list[i] = 3;
+          } else if (list[i] === 6) {
+            list[i] = 9;
+          } else if (list[i] === 7) {
+            list[i] = 6;
+          } else if (list[i] === 8) {
+            list[i] = 10;
+          } else if (list[i] === 9) {
+            list[i] = 4;
+          } else if (list[i] === 10) {
+            list[i] = 12;
+          } else if (list[i] === 11) {
+            list[i] = 8;
+          } else if (list[i] === 12) {
+            list[i] = 1;
+          }
+        }
+        return list;
+      }
+
+
+
+
+
+
+    
     document.getElementById("inversionForm").addEventListener("submit", function(event) {
       event.preventDefault();
       const vectorInput = document.getElementById("vector").value;
       const vector = vectorInput.split(",").map(Number);
-      const inversionCount = countInversions(vector);
+      const vector2 = replaceNumbers(vector)
+      const inversionCount = countInversions(vector2);
+      
       document.getElementById("result").innerText = "Antal inversioner: " + inversionCount;
     });
   </script>
