@@ -4,8 +4,10 @@
   <title>The force is strong with this one -- Matematik i Kosta</title>
 </head>
 <body>
-  <h1>Räkna ut er poäng</h1>
-  Lägst poäng vinner. Lägsta möjliga poäng är 0, och sämsta möjliga är 36.
+  <h1>Räkna ut er poäng*</h1>
+  Lägst poäng vinner. Lägsta möjliga poäng är 0, och sämsta möjliga är 36. Poängen beräknas som minsta antalet <a href="https://sv.wikipedia.org/wiki/Inversion_(kombinatorik)">inversioner</a>.
+
+
   <br><br>
   <form id="inversionForm">
     <label for="vector">Mata in er lista (kommaseparerade tal, t.ex. 1, 7, 6, 2, ...):</label>
@@ -17,7 +19,7 @@
   <script>
     function countInversions(arr) {
       let count = 0;
-
+      arr = replaceNumbers(arr)
       function mergeSort(arr) {
         if (arr.length <= 1) {
           return arr;
@@ -30,6 +32,47 @@
         return merge(mergeSort(left), mergeSort(right));
       }
 
+      function replaceNumbers(list) {
+        for (let i = 0; i < list.length; i++) {
+          if (list[i] === 1) {
+            list[i] = 11;
+          } else if (list[i] === 2) {
+            list[i] = 5;
+          } else if (list[i] === 3) {
+            list[i] = 7;
+          } else if (list[i] === 4) {
+            list[i] = 2;
+          } else if (list[i] === 5) {
+            list[i] = 3;
+          } else if (list[i] === 6) {
+            list[i] = 9;
+          } else if (list[i] === 7) {
+            list[i] = 6;
+          } else if (list[i] === 8) {
+            list[i] = 10;
+          } else if (list[i] === 9) {
+            list[i] = 4;
+          } else if (list[i] === 10) {
+            list[i] = 12;
+          } else if (list[i] === 11) {
+            list[i] = 8;
+          } else if (list[i] === 12) {
+            list[i] = 1;
+          }
+        }
+        return list;
+      }
+
+#const inputList = [1, 2, 3, 2, 1, 3];
+#const modifiedList = replaceNumbers(inputList);
+#console.log("Inputlista:", inputList);
+#console.log("Modifierad lista:", modifiedList);
+
+
+
+      
+
+      
       function merge(left, right) {
         let result = [];
         let leftIndex = 0;
