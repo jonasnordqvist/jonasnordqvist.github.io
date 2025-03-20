@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moose</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 50px;
+    }
+
+    img {
+      max-width: 300px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+
+    .joke-container {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .punchline {
+      display: none;
+      font-size: 1.3em;
+      font-style: italic;
+      color: #555;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 10px 15px;
+      font-size: 1em;
+      cursor: pointer;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    #newJokeButton {
+      display: none;
+      background-color: #007bff;
+    }
+
+    #newJokeButton:hover {
+      background-color: #0056b3;
+    }
+  </style>
+  <script>
+    const jokes = [
+      { setup: "Vad är älgarnas favoritmat?", punchline: "Potatis-moose" },
+      { setup: "Vem är älgens favoritsläkting?", punchline: "Moose-tern" },
+    ];
+
+    function showRandomJoke() {
+      const jokeContainer = document.getElementById("joke");
+      const punchlineContainer = document.getElementById("punchline");
+      const revealButton = document.getElementById("revealButton");
+      const newJokeButton = document.getElementById("newJokeButton");
+
+      const randomIndex = Math.floor(Math.random() * jokes.length);
+      const joke = jokes[randomIndex];
+
+      jokeContainer.textContent = joke.setup;
+      punchlineContainer.textContent = joke.punchline;
+
+      punchlineContainer.style.display = "none";
+      revealButton.style.display = "inline-block";
+      newJokeButton.style.display = "none";
+    }
+
+    function revealPunchline() {
+      document.getElementById("punchline").style.display = "block";
+      document.getElementById("revealButton").style.display = "none";
+      document.getElementById("newJokeButton").style.display = "inline-block";
+    }
+  </script>
+</head>
+
+<body onload="showRandomJoke()">
+
+  <img src="moose-cow.png" alt="Moose cow">
+
+  <div class="joke-container" id="joke">
+
+  </div>
+
+  <div class="punchline" id="punchline">
+
+  </div>
+
+  <button id="revealButton" onclick="revealPunchline()">Please, do tell me!</button>
+  <button id="newJokeButton" onclick="showRandomJoke()">En till!</button>
+
+</body>
+
+</html>
