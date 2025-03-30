@@ -1,145 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Moose</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 50px;
-    }
+<body>
 
-    img {
-      max-width: 300px;
-      height: auto;
-      margin-bottom: 20px;
-    }
 
-    .joke-container {
-      font-size: 1.5em;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 15px;
-    }
 
-    .punchline {
-      display: none;
-      font-size: 1.3em;
-      font-style: italic;
-      color: #555;
-      margin-top: 10px;
-    }
 
-    button {
-      padding: 10px 15px;
-      font-size: 1em;
-      cursor: pointer;
-      border: none;
-      background-color: #007bff;
-      color: white;
-      border-radius: 5px;
-      margin-top: 10px;
-    }
 
-    button:hover {
-      background-color: #0056b3;
-    }
 
-    #newJokeButton {
-      display: none;
-      background-color: #007bff;
-    }
+    <h1>This site has been moved to jokemoo.se</h1>
 
-    #newJokeButton:hover {
-      background-color: #0056b3;
-    }
-  </style>
-  <script>
-    const jokes = [
-      { setup: "Vad är älgarnas favoritmat?", punchline: "Potatismoose." },
-      { setup: "Vem är älgens favoritsläkting?", punchline: "Mooster Britta." },
-      { setup: "Vilken del av veckan gillar älgen bäst?", punchline: "Hälgen." },
-      { setup: "Vilken är älgens favoritfågel?", punchline: "Fiskmoosen." },
-      { setup: "Vilken tid på året tar älgen det som mest lugnt?", punchline: "Julhälgen." },
-      { setup: "Vad dricker älgen helst?", punchline: "Julmoost." },
-      { setup: "Vad är älgens favoritansiktsbehåring?", punchline: "Moostasch." },
-      { setup: "Hur räknar älgen till 10,000?", punchline: "Katten, moosen, tio tusen." },
-      { setup: "Är fem älgar fler än fyra elefanter?", punchline: "Ja, det mooste man nog säga." },
-      { setup: "Varför hänger Ranelid med älgen?", punchline: "Älgen är Ranelids moosa." },
-      { setup: "Varför fick älgen gå till läkaren?", punchline: "Han fick moosarm." },
-      { setup: "Varför är älgen så kultiverad?", punchline: "Hon hänger alltid på mooseum." },
-      { setup: "Hur skiljer man enklast en älg från en ren?", punchline: "På moosklerna." },
-      { setup: "Vilken älg går till historien för sin hemska dåd?", punchline: "Moosolini." },
-      { setup: "Vad lyssnar helst älgarna till?", punchline: "Det är ju moosik." },
-      { setup: "Hur vet älgarna när de ska vakna?", punchline: "De lyssnar bara efter revälgen." },
-      { setup: "Vad mäter en vuxen älg i mankhöjd?", punchline: "Upp till 230 cm. Det var inte så roligt, men det var sant." },
-      { setup: "Vad heter Alexandre Dumas älgbok?", punchline: "De tre moosketörerna." },
-      { setup: "Varför beter sig älgen så konstigt?", punchline: "Jag vet inte, men älgar är allt lite älgest." },
-      { setup: "Hur inleder älgen sin helg?", punchline: "Fredagsmoose med tacos." },
-      { setup: "Vad väljer helst älgen på sin pizza?", punchline: "Endast tomat och moosarella." },
-      { setup: "Vad kör älgen?", punchline: "Älgen kör en Moostang." },
-      { setup: "Vad dricker älgarna till frukost?", punchline: "Åtminstone på semestern så dricker den mimoosa." },
-      { setup: "Varför är älgen så trött när helgen kommer?", punchline: "För att hela veckan bestått av en massa moosten." },
-      { setup: "Vad heter den mest musikaliska älgen?", punchline: "Det är Wolfgang Amadeus Moozart." },
-      { setup: "Var tillverkar älgarna sitt vin?", punchline: "Deras vin görs framförallt i Mooseldalen." },
-      { setup: "Varför finns det så många boxande älgar?", punchline: "För att i ringen försöker de alltid göra moose av varandra." },
-      { setup: "Vad säger älgen när den har piffat klart?", punchline: "Det där var grädden på mooset." },
-      { setup: "Var handlar älgen när den är på besök i huvudstaden?", punchline: "På MOOSE." },
-      { setup: "Vad äter de grekiska älgarna till middag?", punchline: "Mooseaka." },
-
-      { setup: "Varför tycker älgarna inte om stolpiller?", punchline: "De är så svåra att svälga." },
-      { setup: "Vad kallas en troende älg?", punchline: "Mooslim" },
-      { setup: "Vilken är älgarnas favoritsång vid jul?", punchline: "O hälga natt." },
-      { setup: "Varför blir älgen så bakfull efter en fest?", punchline: "De håller alltid på och bälgar i sig." }
-    ];
-
-    function showRandomJoke() {
-      const jokeContainer = document.getElementById("joke");
-      const punchlineContainer = document.getElementById("punchline");
-      const revealButton = document.getElementById("revealButton");
-      const newJokeButton = document.getElementById("newJokeButton");
-
-      const randomIndex = Math.floor(Math.random() * jokes.length);
-      const joke = jokes[randomIndex];
-
-      jokeContainer.textContent = joke.setup;
-      punchlineContainer.textContent = joke.punchline;
-
-      punchlineContainer.style.display = "none";
-      revealButton.style.display = "inline-block";
-      newJokeButton.style.display = "none";
-    }
-
-    function revealPunchline() {
-      document.getElementById("punchline").style.display = "block";
-      document.getElementById("revealButton").style.display = "none";
-      document.getElementById("newJokeButton").style.display = "inline-block";
-    }
-  </script>
-</head>
-
-<body onload="showRandomJoke()">
-
-  <img src="imgs/moose-cow.png" alt="Moose cow">
-
-  <div class="joke-container" id="joke">
-
-  </div>
-
-  <div class="punchline" id="punchline">
-
-  </div>
-
-  <button id="revealButton" onclick="revealPunchline()">Please, do tell me!</button>
-  <button id="newJokeButton" onclick="showRandomJoke()">En till!</button>
-
-  <!---<br><br><br><br><br><br><br><br><br><br>
-  <footer>
-    <p>&copy; Nordstnerberg Moose Inc. 2025</p>
-  </footer>-->
 
 </body>
 
