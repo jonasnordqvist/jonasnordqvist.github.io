@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="sv">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mattetest</title>
+    <style>
+        :root {
+            --bg: #f9fafb;
+            --surface: #ffffff;
+            --text: #111827;
+            --muted: #6b7280;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --border: #e5e7eb;
+            --success: #16a34a;
+            --success-bg: #dcfce7;
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            background: var(--surface);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 520px;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        #progressInfo {
+            font-size: 0.875rem;
+            color: var(--muted);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        #questionText {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        #visualContent {
+            margin-bottom: 1.5rem;
+        }
+
+        .grid-fraction {
+            display: grid;
+            gap: 2px;
+            margin: 0 auto;
+            justify-content: center;
+            width: fit-content;
+        }
+
+        .grid-cell {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1.25rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.875rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        #resultScore {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 1.5rem 0;
+        }
+
+        #reportList {
+            text-align: left;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .report-item {
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            border: 1px solid;
+        }
+
+        .report-item.correct {
+            background: var(--success-bg);
+            border-color: var(--success);
+            color: #14532d;
+        }
+
+        .report-item.incorrect {
+            background: var(--danger-bg);
+            border-color: var(--danger);
+            color: #7f1d1d;
+        }
+
+        .report-meta {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="quizSection">
+            <div id="progressInfo"></div>
+            <div id="questionText"></div>
+            <div id="visualContent"></div>
+            <form id="answerForm">
+                <input type="text" id="answerInput" autocomplete="off" required>
+                <button type="submit">Svara</button>
+            </form>
+        </div>
+        <div id="resultSection" class="hidden">
+            <h1>Testet är klart!</h1>
+            <div id="resultScore"></div>
+            <div id="reportList"></div>
+            <button id="restartBtn">Börja ny omgång</button>
+        </div>
+    </div>
+
+    <script>
+        const QUESTIONS_PER_SESSION = 10;
+        let sessionQuestions = [];
+        let currentQuestionIndex = 0;
+        let currentScore = 0;
+
+        const quizSection = document.getElementById('quizSection');
+        const resultSection = document.getElementById('resultSection');
+        const progressInfo = document.getElementById('progressInfo');
+        const questionText = document.getElementById('questionText');
+        const visualContent = document.getElementById('visualContent');
+        const answerInput = document.getElementById('answerInput');
+        const answerForm = document.getElementById('answerForm');
+        const resultScore = document.getElementById('resultScore');
+        const reportList = document.getElementById('reportList');
+        const restartBtn = document.getElementById('restartBtn');
+
+        const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+        const numToSwedish = (num) => {
+            const ones = ["", "ett", "två", "tre", "fyra", "fem", "sex", "sju", "åtta", "nio"];
+            const teens = ["tio", "elva", "tolv", "tretton", "fjorton", "femton", "sexton", "sjutton", "arton", "nitton"];
+            const tens = ["", "tio", "tjugo", "trettio", "fyrtio", "femtio", "sextio", "sjuttio", "åttio", "nittio"];
+
+            const build99 = (n) => {
+                if (n < 10) return ones[n];
+                if (n < 20) return teens[n - 10];
+                return tens[Math.floor(n / 10)] + ones[n % 10];
+            };
+
+            const build999 = (n) => {
+                if (n < 100) return build99(n);
+                const h = Math.floor(n / 100);
+                return (h === 1 ? "etthundra" : ones[h] + "hundra") + build99(n % 100);
+            };
+
+            const th = Math.floor(num / 1000);
+            return (th === 1 ? "ettusen" : ones[th] + "tusen") + build999(num % 1000);
+        };
+
+        const generateTextToNumber = () => {
+            const number = randomInt(1100, 9999);
+            return { text: `Skriv talet med siffror: ${numToSwedish(number)}`, answer: number.toString(), type: 'standard' };
+        };
+
+        const generateTimeAddition = () => {
+            const h = randomInt(8, 16);
+            const m = randomInt(0, 11) * 5;
+            const addM = randomInt(1, 11) * 5;
+
+            let endH = h;
+            let endM = m + addM;
+            if (endM >= 60) {
+                endM -= 60;
+                endH += 1;
+            }
+
+            const format = (hrs, mins) => `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+            return { text: `Klockan är ${format(h, m)}. Vad är klockan om ${addM} minuter?`, answer: format(endH, endM), type: 'standard' };
+        };
+
+        const generateFractionGrid = () => {
+            const cols = randomInt(2, 5);
+            const rows = randomInt(2, 3);
+            const total = cols * rows;
+            const filled = randomInt(1, total - 1);
+
+            let cells = Array(total).fill(false).fill(true, 0, filled);
+            cells.sort(() => Math.random() - 0.5);
+
+            const gridHtml = `
+                <div class="grid-fraction" style="grid-template-columns: repeat(${cols}, 40px);">
+                    ${cells.map(c => `<div class="grid-cell" style="background: ${c ? 'var(--primary)' : 'var(--border)'};"></div>`).join('')}
+                </div>
+            `;
+
+            return { text: `Hur stor andel av figuren är fylld?<br><span style="font-size:1rem;font-weight:normal;">Svara som ett bråk (t.ex. 1/2)</span>`, visual: gridHtml, type: 'fraction', num: filled, den: total, answer: `${filled}/${total}` };
+        };
+
+        const generateEquation = () => {
+            const x = randomInt(10, 100);
+            const a = randomInt(10, 150);
+            return { text: `x + ${a} = ${x + a}<br>Vad är x?`, answer: x.toString(), type: 'standard' };
+        };
+
+        const generateMean = () => {
+            const count = randomInt(3, 5);
+            let sum = 0;
+            let nums = [];
+            for (let i = 0; i < count; i++) {
+                const n = randomInt(2, 12);
+                nums.push(n);
+                sum += n;
+            }
+            const rem = sum % count;
+            if (rem !== 0) {
+                nums[0] += (count - rem);
+                sum += (count - rem);
+            }
+            return { text: `Beräkna medelvärdet av talen: ${nums.join(', ')}`, answer: (sum / count).toString(), type: 'standard' };
+        };
+
+        const generateUnitConversion = () => {
+            const subTypes = [
+                () => { const q = randomInt(2, 6); return { text: `Hur många månader är ${q} kvartal?`, answer: (q * 3).toString() }; },
+                () => { const h = randomInt(2, 5); const m = randomInt(1, 59); return { text: `Hur många minuter är ${h} h och ${m} min?`, answer: (h * 60 + m).toString() }; },
+                () => { const d = [2, 3, 4, 6, 8, 12][randomInt(0, 5)]; return { text: `Hur många timmar är 1/${d} dygn?`, answer: (24 / d).toString() }; },
+                () => {
+                    const h = randomInt(1, 4);
+                    const m = randomInt(1, 59);
+                    return { text: `Skriv ${h * 60 + m} minuter i timmar och minuter.<br><span style="font-size:1rem;font-weight:normal;">Svara i formatet h:mm (t.ex. 2:15)</span>`, answer: `${h}:${m.toString().padStart(2, '0')}` };
+                }
+            ];
+            const generator = subTypes[randomInt(0, subTypes.length - 1)];
+            return { ...generator(), type: 'standard' };
+        };
+
+        const generateAdd3 = () => {
+            const a = randomInt(100, 999);
+            const b = randomInt(100, 999);
+            return { text: `${a} + ${b}`, answer: (a + b).toString(), type: 'standard' };
+        };
+
+        const generateSub3 = () => {
+            const a = randomInt(200, 999);
+            const b = randomInt(100, a - 1);
+            return { text: `${a} - ${b}`, answer: (a - b).toString(), type: 'standard' };
+        };
+
+        const generateMul = () => {
+            const a = randomInt(2, 9);
+            const b = randomInt(100, 999);
+            return { text: `${a} · ${b}`, answer: (a * b).toString(), type: 'standard' };
+        };
+
+        const generateDiv = () => {
+            const a = randomInt(2, 9);
+            const ans = randomInt(20, 150);
+            return { text: `${a * ans} / ${a}`, answer: ans.toString(), type: 'standard' };
+        };
+
+        const questionGenerators = [
+            generateTextToNumber, generateTimeAddition, generateFractionGrid,
+            generateEquation, generateMean, generateUnitConversion,
+            generateAdd3, generateSub3, generateMul, generateDiv
+        ];
+
+        const buildSession = () => {
+            sessionQuestions = [...questionGenerators]
+                .sort(() => Math.random() - 0.5)
+                .map(generator => generator());
+            currentQuestionIndex = 0;
+            currentScore = 0;
+        };
+
+        const renderQuestion = () => {
+            const q = sessionQuestions[currentQuestionIndex];
+            progressInfo.textContent = `Fråga ${currentQuestionIndex + 1} av ${QUESTIONS_PER_SESSION}`;
+            questionText.innerHTML = q.text;
+
+            visualContent.innerHTML = q.visual || '';
+            visualContent.className = q.visual ? '' : 'hidden';
+
+            answerInput.value = '';
+            answerInput.focus();
+        };
+
+        const evaluateAnswer = (q, userInput) => {
+            const cleanInput = userInput.replace(/\s+/g, '').toLowerCase();
+            if (q.type === 'fraction') {
+                const parts = cleanInput.split('/');
+                if (parts.length === 2) {
+                    return (parseInt(parts[0], 10) * q.den) === (q.num * parseInt(parts[1], 10));
+                }
+                return false;
+            }
+            return cleanInput === q.answer.toLowerCase();
+        };
+
+        const buildReport = () => {
+            reportList.innerHTML = '';
+            sessionQuestions.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = `report-item ${q.isCorrect ? 'correct' : 'incorrect'}`;
+
+                const questionHtml = q.text.replace(/<br>/g, ' ');
+                const visualNote = q.type === 'fraction' ? ' (figur)' : '';
+
+                item.innerHTML = `
+                    <div><strong>${idx + 1}.</strong> ${questionHtml}${visualNote}</div>
+                    <div class="report-meta">
+                        Ditt svar: ${q.userAnswer || '-'} | Korrekt svar: ${q.type === 'fraction' ? q.answer + ' (eller likvärdigt)' : q.answer}
+                    </div>
+                `;
+                reportList.appendChild(item);
+            });
+        };
+
+        const showResults = () => {
+            quizSection.classList.add('hidden');
+            resultSection.classList.remove('hidden');
+            resultScore.textContent = `${currentScore} / ${QUESTIONS_PER_SESSION}`;
+            buildReport();
+        };
+
+        const handleAnswer = (e) => {
+            e.preventDefault();
+            const q = sessionQuestions[currentQuestionIndex];
+            q.userAnswer = answerInput.value;
+            q.isCorrect = evaluateAnswer(q, answerInput.value);
+
+            if (q.isCorrect) currentScore++;
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < QUESTIONS_PER_SESSION) {
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        };
+
+        const startNewSession = () => {
+            resultSection.classList.add('hidden');
+            quizSection.classList.remove('hidden');
+            buildSession();
+            renderQuestion();
+        };
+
+        answerForm.addEventListener('submit', handleAnswer);
+        restartBtn.addEventListener('click', startNewSession);
+
+        startNewSession();
+    </script>
+</body>
+
+</html>
