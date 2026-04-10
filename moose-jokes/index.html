@@ -1,16 +1,517 @@
 <!DOCTYPE html>
-<html>
+<html lang="sv">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lär-Appen</title>
+    <style>
+        :root {
+            --bg: #f9fafb;
+            --surface: #ffffff;
+            --text: #111827;
+            --muted: #6b7280;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --border: #e5e7eb;
+            --success: #16a34a;
+            --success-bg: #dcfce7;
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            background: var(--surface);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 520px;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .menu-grid {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #progressInfo {
+            font-size: 0.875rem;
+            color: var(--muted);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        #questionText {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        #visualContent {
+            margin-bottom: 1.5rem;
+        }
+
+        .grid-fraction {
+            display: grid;
+            gap: 2px;
+            margin: 0 auto;
+            justify-content: center;
+            width: fit-content;
+        }
+
+        .grid-cell {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1.25rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.875rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: var(--muted);
+            margin-top: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-admin {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        .btn-admin:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            padding: 0.4rem;
+            border-radius: 4px;
+            width: auto;
+            font-size: 0.8rem;
+        }
+
+        #resultScore {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 1.5rem 0;
+        }
+
+        #reportList {
+            text-align: left;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .report-item {
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            border: 1px solid;
+        }
+
+        .report-item.correct {
+            background: var(--success-bg);
+            border-color: var(--success);
+            color: #14532d;
+        }
+
+        .report-item.incorrect {
+            background: var(--danger-bg);
+            border-color: var(--danger);
+            color: #7f1d1d;
+        }
+
+        .report-meta {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .vocab-list {
+            text-align: left;
+            max-height: 250px;
+            overflow-y: auto;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .vocab-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .vocab-item:last-child {
+            border-bottom: none;
+        }
+
+        .vocab-inputs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .vocab-inputs input {
+            margin-bottom: 0;
+            font-size: 1rem;
+        }
+    </style>
+</head>
 
 <body>
+    <div class="container">
+        <div id="menuSection">
+            <h1>Välj Ämne</h1>
+            <div class="menu-grid">
+                <button onclick="appState.startSession('math')">Matematik</button>
+                <button onclick="appState.startSession('english')">Engelska Glosor</button>
+            </div>
+            <button class="btn-admin" onclick="adminModule.login()">Hantera Glosor (Admin)</button>
+        </div>
 
+        <div id="quizSection" class="hidden">
+            <div id="progressInfo"></div>
+            <div id="questionText"></div>
+            <div id="visualContent"></div>
+            <form id="answerForm">
+                <input type="text" id="answerInput" autocomplete="off" required>
+                <button type="submit">Svara</button>
+            </form>
+            <button class="btn-secondary" onclick="appState.returnToMenu()">Avbryt</button>
+        </div>
 
+        <div id="resultSection" class="hidden">
+            <h1>Testet är klart!</h1>
+            <div id="resultScore"></div>
+            <div id="reportList"></div>
+            <button onclick="appState.startSession(appState.currentSubjectKey)">Börja ny omgång</button>
+            <button class="btn-secondary" onclick="appState.returnToMenu()">Till Huvudmenyn</button>
+        </div>
 
+        <div id="adminSection" class="hidden">
+            <h1>Veckans Glosor</h1>
+            <form id="addVocabForm" class="vocab-inputs">
+                <input type="text" id="svInput" placeholder="Svenska" required autocomplete="off">
+                <input type="text" id="enInput" placeholder="Engelska" required autocomplete="off">
+                <button type="submit" style="width: auto; padding: 0.75rem 1.5rem;">Lägg till</button>
+            </form>
+            <div id="vocabListContainer" class="vocab-list"></div>
+            <button class="btn-secondary" onclick="appState.returnToMenu()">Tillbaka till Menyn</button>
+        </div>
+    </div>
 
+    <script>
+        const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
+        const numToSwedish = (num) => {
+            const ones = ["", "ett", "två", "tre", "fyra", "fem", "sex", "sju", "åtta", "nio"];
+            const teens = ["tio", "elva", "tolv", "tretton", "fjorton", "femton", "sexton", "sjutton", "arton", "nitton"];
+            const tens = ["", "tio", "tjugo", "trettio", "fyrtio", "femtio", "sextio", "sjuttio", "åttio", "nittio"];
+            const build99 = (n) => {
+                if (n < 10) return ones[n];
+                if (n < 20) return teens[n - 10];
+                return tens[Math.floor(n / 10)] + ones[n % 10];
+            };
+            const build999 = (n) => {
+                if (n < 100) return build99(n);
+                const h = Math.floor(n / 100);
+                return (h === 1 ? "etthundra" : ones[h] + "hundra") + build99(n % 100);
+            };
+            const th = Math.floor(num / 1000);
+            return (th === 1 ? "ettusen" : ones[th] + "tusen") + build999(num % 1000);
+        };
 
-    <h1>This site has been moved to jokemoo.se</h1>
+        const vocabularyManager = {
+            words: [],
+            init() {
+                const stored = localStorage.getItem('app_vocab');
+                if (stored) {
+                    this.words = JSON.parse(stored);
+                } else {
+                    this.words = [
+                        { sv: "bil", en: "car" }, { sv: "äpple", en: "apple" },
+                        { sv: "fönster", en: "window" }, { sv: "tåg", en: "train" }
+                    ];
+                    this.save();
+                }
+            },
+            save() {
+                localStorage.setItem('app_vocab', JSON.stringify(this.words));
+            },
+            add(sv, en) {
+                this.words.push({ sv: sv.trim(), en: en.trim() });
+                this.save();
+            },
+            remove(index) {
+                this.words.splice(index, 1);
+                this.save();
+            }
+        };
 
+        const mathGenerators = [
+            () => { const n = randomInt(1100, 9999); return { text: `Skriv talet med siffror: ${numToSwedish(n)}`, answer: n.toString(), type: 'standard' }; },
+            () => {
+                const h = randomInt(8, 16), m = randomInt(0, 11) * 5, addM = randomInt(1, 11) * 5;
+                let endH = h, endM = m + addM;
+                if (endM >= 60) { endM -= 60; endH += 1; }
+                const format = (hrs, mins) => `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+                return { text: `Klockan är ${format(h, m)}. Vad är klockan om ${addM} minuter?`, answer: format(endH, endM), type: 'standard' };
+            },
+            () => {
+                const cols = randomInt(2, 5), rows = randomInt(2, 3), total = cols * rows, filled = randomInt(1, total - 1);
+                let cells = Array(total).fill(false).fill(true, 0, filled).sort(() => Math.random() - 0.5);
+                const gridHtml = `<div class="grid-fraction" style="grid-template-columns: repeat(${cols}, 40px);">${cells.map(c => `<div class="grid-cell" style="background: ${c ? 'var(--primary)' : 'var(--border)'};"></div>`).join('')}</div>`;
+                return { text: `Hur stor andel av figuren är fylld?<br><span style="font-size:1rem;font-weight:normal;">Svara som ett bråk (t.ex. 1/2)</span>`, visual: gridHtml, type: 'fraction', num: filled, den: total, answer: `${filled}/${total}` };
+            },
+            () => { const x = randomInt(10, 100), a = randomInt(10, 150); return { text: `x + ${a} = ${x + a}<br>Vad är x?`, answer: x.toString(), type: 'standard' }; },
+            () => {
+                const c = randomInt(3, 5); let sum = 0, nums = [];
+                for (let i = 0; i < c; i++) { const n = randomInt(2, 12); nums.push(n); sum += n; }
+                const rem = sum % c; if (rem !== 0) { nums[0] += (c - rem); sum += (c - rem); }
+                return { text: `Beräkna medelvärdet av talen: ${nums.join(', ')}`, answer: (sum / c).toString(), type: 'standard' };
+            },
+            () => { const a = randomInt(100, 999), b = randomInt(100, 999); return { text: `${a} + ${b}`, answer: (a + b).toString(), type: 'standard' }; },
+            () => { const a = randomInt(2, 9), b = randomInt(100, 999); return { text: `${a} · ${b}`, answer: (a * b).toString(), type: 'standard' }; }
+        ];
 
+        const subjectModules = {
+            math: {
+                questionsPerSession: 10,
+                generate: () => mathGenerators[randomInt(0, mathGenerators.length - 1)]()
+            },
+            english: {
+                questionsPerSession: 5,
+                generate: () => {
+                    if (vocabularyManager.words.length === 0) return { text: "Inga glosor inlagda!", answer: "", type: 'standard' };
+                    const pair = vocabularyManager.words[randomInt(0, vocabularyManager.words.length - 1)];
+                    return { text: `Översätt till engelska:<br><strong>${pair.sv}</strong>`, answer: pair.en, type: 'standard' };
+                }
+            }
+        };
+
+        const dom = {
+            menu: document.getElementById('menuSection'),
+            quiz: document.getElementById('quizSection'),
+            result: document.getElementById('resultSection'),
+            admin: document.getElementById('adminSection'),
+            progress: document.getElementById('progressInfo'),
+            questionText: document.getElementById('questionText'),
+            visualContent: document.getElementById('visualContent'),
+            answerInput: document.getElementById('answerInput'),
+            answerForm: document.getElementById('answerForm'),
+            resultScore: document.getElementById('resultScore'),
+            reportList: document.getElementById('reportList'),
+            vocabList: document.getElementById('vocabListContainer'),
+            addVocabForm: document.getElementById('addVocabForm'),
+            svInput: document.getElementById('svInput'),
+            enInput: document.getElementById('enInput')
+        };
+
+        const adminModule = {
+            // NOTE: Simple client side pin. 
+            // TODO: Move to backend validation if used in production with multiple students.
+            pin: "1234",
+
+            login() {
+                const input = prompt("Ange administratörskod för att hantera glosor:");
+                if (input === this.pin) {
+                    appState.switchView('admin');
+                    this.renderList();
+                } else if (input !== null) {
+                    alert("Felaktig kod.");
+                }
+            },
+
+            renderList() {
+                dom.vocabList.innerHTML = '';
+                vocabularyManager.words.forEach((w, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'vocab-item';
+                    item.innerHTML = `
+                        <span><strong>${w.sv}</strong> = ${w.en}</span>
+                        <button class="btn-danger" onclick="adminModule.removeWord(${index})">Ta bort</button>
+                    `;
+                    dom.vocabList.appendChild(item);
+                });
+            },
+
+            addWord(e) {
+                e.preventDefault();
+                vocabularyManager.add(dom.svInput.value, dom.enInput.value);
+                dom.svInput.value = '';
+                dom.enInput.value = '';
+                dom.svInput.focus();
+                this.renderList();
+            },
+
+            removeWord(index) {
+                vocabularyManager.remove(index);
+                this.renderList();
+            }
+        };
+
+        const appState = {
+            currentSubjectKey: null,
+            sessionQuestions: [],
+            currentQuestionIndex: 0,
+            currentScore: 0,
+
+            startSession(subjectKey) {
+                this.currentSubjectKey = subjectKey;
+                const subject = subjectModules[subjectKey];
+
+                // NOTE: Adjust max questions to prevent infinite loops if few words exist
+                let qCount = subject.questionsPerSession;
+                if (subjectKey === 'english') {
+                    qCount = Math.min(qCount, vocabularyManager.words.length || 1);
+                }
+
+                this.sessionQuestions = Array.from({ length: qCount }, () => subject.generate());
+                this.currentQuestionIndex = 0;
+                this.currentScore = 0;
+                this.switchView('quiz');
+                this.renderQuestion();
+            },
+
+            renderQuestion() {
+                const q = this.sessionQuestions[this.currentQuestionIndex];
+                dom.progress.textContent = `Fråga ${this.currentQuestionIndex + 1} av ${this.sessionQuestions.length}`;
+                dom.questionText.innerHTML = q.text;
+                dom.visualContent.innerHTML = q.visual || '';
+                dom.visualContent.className = q.visual ? '' : 'hidden';
+                dom.answerInput.value = '';
+                dom.answerInput.focus();
+            },
+
+            evaluateAnswer(q, userInput) {
+                const cleanInput = userInput.replace(/\s+/g, '').toLowerCase();
+                if (q.type === 'fraction') {
+                    const parts = cleanInput.split('/');
+                    return parts.length === 2 && (parseInt(parts[0], 10) * q.den) === (q.num * parseInt(parts[1], 10));
+                }
+                return cleanInput === q.answer.toLowerCase();
+            },
+
+            handleSubmission(e) {
+                e.preventDefault();
+                const q = this.sessionQuestions[this.currentQuestionIndex];
+                q.userAnswer = dom.answerInput.value;
+                q.isCorrect = this.evaluateAnswer(q, dom.answerInput.value);
+                if (q.isCorrect) this.currentScore++;
+
+                this.currentQuestionIndex++;
+                if (this.currentQuestionIndex < this.sessionQuestions.length) {
+                    this.renderQuestion();
+                } else {
+                    this.showResults();
+                }
+            },
+
+            showResults() {
+                this.switchView('result');
+                dom.resultScore.textContent = `${this.currentScore} / ${this.sessionQuestions.length}`;
+                dom.reportList.innerHTML = '';
+                this.sessionQuestions.forEach((q, idx) => {
+                    const item = document.createElement('div');
+                    item.className = `report-item ${q.isCorrect ? 'correct' : 'incorrect'}`;
+                    item.innerHTML = `
+                        <div><strong>${idx + 1}.</strong> ${q.text.replace(/<br>/g, ' ')}</div>
+                        <div class="report-meta">Ditt svar: ${q.userAnswer || '-'} | Korrekt svar: ${q.answer}</div>
+                    `;
+                    dom.reportList.appendChild(item);
+                });
+            },
+
+            switchView(viewName) {
+                ['menu', 'quiz', 'result', 'admin'].forEach(v => dom[v].classList.add('hidden'));
+                dom[viewName].classList.remove('hidden');
+            },
+
+            returnToMenu() {
+                this.switchView('menu');
+            }
+        };
+
+        // Initialization
+        vocabularyManager.init();
+        dom.answerForm.addEventListener('submit', (e) => appState.handleSubmission(e));
+        dom.addVocabForm.addEventListener('submit', (e) => adminModule.addWord(e));
+    </script>
 </body>
 
 </html>
